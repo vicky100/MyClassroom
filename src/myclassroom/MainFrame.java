@@ -1,6 +1,8 @@
 package myclassroom;
 
+import java.awt.Dimension;
 import java.awt.Toolkit;
+import javax.swing.ImageIcon;
 
 /****** @author vicky ******/
 
@@ -9,11 +11,11 @@ public class MainFrame extends javax.swing.JFrame {
     WhiteBoard whiteBoard;
     public ItsMe its[] = new ItsMe[50];
     
-    
     public MainFrame() {
         initComponents();
         
-        this.setSize(Toolkit.getDefaultToolkit().getScreenSize());
+        Dimension dm = Toolkit.getDefaultToolkit().getScreenSize();
+        this.setSize(dm);
     }
 
 
@@ -21,17 +23,28 @@ public class MainFrame extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        logoLabel = new javax.swing.JLabel();
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("MyClassroom");
+        setBackground(new java.awt.Color(254, 254, 254));
+        setForeground(new java.awt.Color(254, 254, 254));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 855, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(32, 32, 32)
+                .addComponent(logoLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 350, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(250, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 541, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(logoLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(474, Short.MAX_VALUE))
         );
 
         pack();
@@ -78,6 +91,7 @@ public class MainFrame extends javax.swing.JFrame {
     public void addWhiteBoard() {
         whiteBoard = new WhiteBoard(this);
         this.add(whiteBoard);
+        logoLabel.setIcon(new ImageIcon("src/resources/logo1.png"));
         
         //System.out.println(Thread.currentThread().getName());
     }
@@ -108,5 +122,6 @@ public class MainFrame extends javax.swing.JFrame {
     
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel logoLabel;
     // End of variables declaration//GEN-END:variables
 }

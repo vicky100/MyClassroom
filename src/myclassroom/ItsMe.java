@@ -61,7 +61,7 @@ public class ItsMe extends javax.swing.JPanel {
         videoCallButton = new javax.swing.JButton();
         voiceCallButton = new javax.swing.JButton();
 
-        setBackground(new java.awt.Color(254, 254, 254));
+        setBackground(new java.awt.Color(208, 239, 247));
 
         myPictureLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/maledisabled.png"))); // NOI18N
 

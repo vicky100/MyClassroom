@@ -200,6 +200,7 @@ public class MainPanel extends javax.swing.JPanel {
     @Override
     public void paintComponent(Graphics g) {     
         super.paintComponent(g);
+        if(image == null) return;
         Image scaledImage=image.getScaledInstance(this.getWidth(), this.getHeight(), Image.SCALE_SMOOTH);
         g.drawImage(scaledImage, 0, 0, this);
     }
