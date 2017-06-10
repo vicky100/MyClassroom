@@ -42,6 +42,8 @@ public class ItsMe extends javax.swing.JPanel {
         videoPanel.setVisible(true);
         this.add(videoPanel);
         
+        
+        
         this.setSize(new Dimension(200, 200));
         this.setLocation(x, y);
         this.setVisible(true);
