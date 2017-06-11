@@ -70,7 +70,7 @@ public class VoiceTransmitter implements Runnable{
                     go.close();
                     baos.flush();
                     baos.close();
-                    Message res = new Message(name, seatNumber, 1, 2, id, new AudioPacket(baos.toByteArray()));  //create message for server, will generate chId and timestamp from this computer's IP and this socket's port 
+                    Message res = new Message(name, seatNumber, 1, 2, id, new AudioPacket(baos.toByteArray()));
                     
                     Iterator<String> it = Server.studentMap.keySet().iterator();
             
@@ -80,6 +80,7 @@ public class VoiceTransmitter implements Runnable{
                         if(temp != null) {
                             temp.out.writeObject(res);
                         }
+                        temp.out.flush();
                     }
                 } catch (IOException ex) {
                     
@@ -88,7 +89,7 @@ public class VoiceTransmitter implements Runnable{
                 Utils.sleep(10);
             }
         }
-        mic.stop();
+        mic.close();
     }
     
 }

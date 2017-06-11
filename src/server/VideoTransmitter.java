@@ -4,11 +4,17 @@ import com.github.sarxos.webcam.Webcam;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import javax.imageio.ImageIO;
+import javax.swing.JOptionPane;
 import message.Message;
+import message.Utils;
 import message.VideoPacket;
 import myclassroom.ItsMe;
+import myclassroom.MainFrame;
 
 /****** @author vicky ******/
 
@@ -19,18 +25,33 @@ public class VideoTransmitter implements Runnable{
     String name;
     int seatNumber;
     String id;
+    MainFrame mainFrame;
     
-    public VideoTransmitter(String name, int seatNumber, String id, ItsMe itsMe) {
+    public VideoTransmitter(String name, int seatNumber, String id, ItsMe itsMe, MainFrame mainFrame) {
         this.name = name;
         this.seatNumber = seatNumber;
         this.itsMe = itsMe;
         this.id = id;
+        this.mainFrame = mainFrame;
     }
     
     @Override
     public void run() {
         System.out.println("webcam is opening...");
-        webcam = Webcam.getDefault();
+        
+        
+        List<Webcam> webcams = Webcam.getWebcams();
+        Map<String, Integer> cool = new HashMap<String, Integer>();
+        String[] webcamNames = new String[webcams.size()];
+        for(int i=0;i<webcams.size();i++) {
+            webcamNames[i] = webcams.get(i).getName();
+            cool.put(webcamNames[i], i);
+        }
+        String option = (String) JOptionPane.showInputDialog(mainFrame, "Choose your webcam", "Webcam", JOptionPane.QUESTION_MESSAGE, null, webcamNames, webcamNames[0]);
+        webcam = webcams.get(cool.get(option));
+        
+        cool.clear();
+        
         long startTime = System.currentTimeMillis();
         webcam.open();
         long endTime = System.currentTimeMillis();
@@ -44,7 +65,7 @@ public class VideoTransmitter implements Runnable{
             
             try {
                 ImageIO.write(image, "jpg", baos);
-                int size = 0;
+                int size;
                 size = baos.size();
                 VideoPacket vp = new VideoPacket(baos.toByteArray(), size);
                 Message res = new Message(name, seatNumber, 1, 3, id, vp);
@@ -60,11 +81,14 @@ public class VideoTransmitter implements Runnable{
                         } catch (IOException ex) {
 
                         }
+                        temp.out.flush();
                     }
                 }
             } catch (IOException ex) {
 
             }
+        
+            Utils.sleep(100);
         }  
         System.out.println("webcam is closed");
         webcam.close();

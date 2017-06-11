@@ -4,8 +4,6 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import message.Message;
 import message.Utils;
@@ -37,16 +35,18 @@ public class VideoReceiver implements Runnable{
             queue.remove(res);
             int seatNumber = res.getSeatNumber();
             if(mainFrame.its[seatNumber].videoCall == true) {
-                VideoPacket vp = (VideoPacket) res.getData();
-                ByteArrayInputStream bais = new ByteArrayInputStream(vp.getData());
-                BufferedImage image = null;
-                try {
-                    image = ImageIO.read(bais);
-                } catch (IOException ex) {
-                        
-                }
-                if(image != null)
-                    mainFrame.its[seatNumber].setImage(image);    
+                if(res.getData() instanceof VideoPacket) {
+                    VideoPacket vp = (VideoPacket) res.getData();
+                    ByteArrayInputStream bais = new ByteArrayInputStream(vp.getData());
+                    
+                    try {
+                        BufferedImage image = ImageIO.read(bais);
+                        if(image != null)
+                            mainFrame.its[seatNumber].setImage(image);
+                    } catch (IOException ex) {
+
+                    }
+                }    
             }
         }
     }

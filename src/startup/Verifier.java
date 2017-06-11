@@ -7,14 +7,16 @@ import java.util.regex.Pattern;
 
 public class Verifier {
     
-     private static final Pattern UNP = Pattern.compile("^[a-zA-Z0-9_]{6,14}$");
+    private static final Pattern UNP = Pattern.compile("^[a-zA-Z0-9_]{6,14}$");
     
     public static int port = 0;
     public static String ipAddress = "";
+    public static String name;
     
     public static boolean nameVerify(String name) {
         Matcher matcher = UNP.matcher(name);
-         return matcher.matches();
+        Verifier.name = name;
+        return matcher.matches();
     }
     
     public static boolean portVarify(String port) {

@@ -3,8 +3,6 @@ package student;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.zip.GZIPOutputStream;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
@@ -26,8 +24,6 @@ public class VoiceTransmitter implements Runnable{
     ObjectOutputStream out;
     
     TargetDataLine mic;
-    
-    static double amplification = 1.0;
     
     
     VoiceTransmitter(String name, int seatNumber, String id, ItsMe itsMe, ObjectOutputStream out) {
@@ -75,9 +71,10 @@ public class VoiceTransmitter implements Runnable{
                     go.close();
                     baos.flush();
                     baos.close();
-                    Message m = new Message(name, seatNumber, 1, 2, id, new AudioPacket(baos.toByteArray()));  //create message for server, will generate chId and timestamp from this computer's IP and this socket's port 
+                    Message m = new Message(name, seatNumber, 1, 2, id, new AudioPacket(baos.toByteArray())); 
                     
                     out.writeObject(m);
+                    out.flush();
                 } catch (IOException ex) {
                     
                 }
@@ -85,7 +82,7 @@ public class VoiceTransmitter implements Runnable{
                 Utils.sleep(10);
             }
         }
-        mic.stop();
+        mic.close();
     }
     
 }

@@ -49,6 +49,7 @@ public class VoiceReceiver implements Runnable{
      @Override
     public void run() {
         while(true) {
+            
             if (queue.isEmpty()) {
                 Utils.sleep(20);
             } else {
@@ -56,27 +57,30 @@ public class VoiceReceiver implements Runnable{
                 queue.remove(in);
                 if (in.getData() instanceof AudioPacket) {
                     GZIPInputStream gis = null;
-                    try {
-                        AudioPacket m = (AudioPacket) (in.getData());
-                        gis = new GZIPInputStream(new ByteArrayInputStream(m.getData()));
-                        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                        while (true) {
-                            int b = gis.read();
-                            if (b == -1) {
-                                break;
-                            } else {
-                                baos.write((byte) b);
-                            }
-                        }
-                        byte[] toPlay=baos.toByteArray();
-                        speaker.write(toPlay, 0, toPlay.length);
-                    } 
-                    catch (IOException ex) {} 
-                    finally {
+                     
+                    if(in.getData() instanceof AudioPacket) {
+                        AudioPacket ap = (AudioPacket) (in.getData());
                         try {
-                            if(gis != null)
-                                gis.close();
-                        } catch (IOException ex) {}
+                            gis = new GZIPInputStream(new ByteArrayInputStream(ap.getData()));
+                            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                            while (true) {
+                                int b = gis.read();
+                                if (b == -1) {
+                                    break;
+                                } else {
+                                    baos.write((byte) b);
+                                }
+                            }
+                            byte[] toPlay=baos.toByteArray();
+                            speaker.write(toPlay, 0, toPlay.length);
+                        } 
+                        catch (IOException ex) {} 
+                        finally {
+                            try {
+                                if(gis != null)
+                                    gis.close();
+                            } catch (IOException ex) {}
+                        }
                     }    
                 }
             }

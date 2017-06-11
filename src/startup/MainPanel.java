@@ -3,6 +3,8 @@ package startup;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -104,17 +106,13 @@ public class MainPanel extends javax.swing.JPanel {
 
     private void startClassPortActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startClassPortActionPerformed
         
-        String name = myName.getText();
-        
-        if(Verifier.nameVerify(name) == false) {
+        if(Verifier.nameVerify(myName.getText()) == false) {
             JOptionPane.showMessageDialog(this, "Enter username accoding to this regex: \"^[a-zA-Z0-9_]{6,14}$\" ", "Incorrect Username", JOptionPane.ERROR_MESSAGE);
             return;
         }
         
-        String str = startClassPort.getText();
-        System.out.println("port: " + str);
         
-        if(Verifier.portVarify(str) == false) {
+        if(Verifier.portVarify(startClassPort.getText()) == false) {
             JOptionPane.showMessageDialog(this, "Port must be a number from 1025 to 65535", "Incorrect Port", JOptionPane.ERROR_MESSAGE);
             return;
         }
@@ -123,7 +121,9 @@ public class MainPanel extends javax.swing.JPanel {
         mainFrame.addWhiteBoard();
         mainFrame.addItsMe();
         
+        String name = Verifier.name;
         int port = Verifier.port;
+        
         try {
             new Thread(new Server(port, name, mainFrame)).start();
         } catch (IOException ex) {
@@ -145,7 +145,6 @@ public class MainPanel extends javax.swing.JPanel {
         }
         
         String str = joinClassPort.getText();
-        System.out.println("port: " + str);
         
         if(Verifier.portVarify(str) == false) {
             JOptionPane.showMessageDialog(this, "Port must be a number from 1025 to 65535", "Incorrect Port", JOptionPane.ERROR_MESSAGE);
@@ -165,24 +164,38 @@ public class MainPanel extends javax.swing.JPanel {
             return;
         }
         
-        Message res = null;
+        
+        ObjectInputStream in;
+        ObjectOutputStream out;
+        
         try {
-            res = (Message)(new ObjectInputStream(client.getInputStream())).readObject();
-            
-            TextPacket reqTP = new TextPacket("Pleasure to join this.");
+            in = new ObjectInputStream(new BufferedInputStream(client.getInputStream()));
+            out = new ObjectOutputStream(new BufferedOutputStream(client.getOutputStream()));
+            out.flush();
+        }
+        catch(IOException ex) {
+            JOptionPane.showMessageDialog(this, "Error in obtaining input/output streams", "Stream creation", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
+        Message res;
+        try {
+            res = (Message)in.readObject();
+            TextPacket reqTP = new TextPacket("Pleasure to join the class");
             Message req = new Message(name, 1, 1, reqTP);
-            new ObjectOutputStream(client.getOutputStream()).writeObject(req);
+            out.writeObject(req);
         } catch (IOException | ClassNotFoundException ex) {
             JOptionPane.showMessageDialog(this, "Error in req/res message", "Error in read/write", JOptionPane.ERROR_MESSAGE);
             return;
         }
         
-        JOptionPane.showMessageDialog(this, "Hi! "+name+", your seat number is: "+res.getSeatNumber() , "Server Reply" , JOptionPane.INFORMATION_MESSAGE);
+        String teacherName = ((TextPacket)res.getData()).getData();
+        JOptionPane.showMessageDialog(this, "#"+teacherName+": Welcome! "+name+", to join the class. Your seat number is: "+res.getSeatNumber() , "Server Reply" , JOptionPane.INFORMATION_MESSAGE);
         
         MainFrame mainFrame = new MainFrame();
         mainFrame.addWhiteBoard();
         mainFrame.addItsMe();
-        Student student = new Student(mainFrame, client, name, res.getSeatNumber(), res.getID());
+        Student student = new Student(mainFrame, client, name, teacherName, res.getSeatNumber(), res.getID(), in, out);
         mainFrame.setVisible(true);
         
         startUp.dispose();

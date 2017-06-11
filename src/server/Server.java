@@ -1,6 +1,7 @@
 package server;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketAddress;
@@ -30,8 +31,7 @@ public class Server implements Runnable{
         this.maxClient = 12;    
         serverSocket = new ServerSocket(this.port);
         
-        SocketAddress inetAddress = serverSocket.getLocalSocketAddress();
-        this.id = inetAddress+":"+port;
+        System.out.println("#servername: "+name+" and #id: "+name+":"+port);
     }
 
     @Override
@@ -49,6 +49,7 @@ public class Server implements Runnable{
                     StudentHandler studentHandler = new StudentHandler(studentSocket, studentMap, seatNumber, mainFrame);
                     studentMap.put(studentHandler.studentID, studentHandler);
                     new Thread(studentHandler).start();
+                    System.out.println("successfully added student no. "+seatNumber);
                 }
                 else
                     studentSocket.close();

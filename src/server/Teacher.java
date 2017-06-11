@@ -11,16 +11,16 @@ public class Teacher implements Runnable{
 
     static ArrayList<Message> queue = new ArrayList<Message>();
     
-    static private int seatNumber;
-    static private String name;
+    static int seatNumber;
+    static String name;
     static String id;
     static MainFrame mainFrame;
     
     public Teacher(String name, int seatNumber, String id, MainFrame mainFrame) {
-        this.seatNumber = seatNumber;
-        this.name = name;
-        this.id = id;
-        this.mainFrame  = mainFrame;
+        Teacher.seatNumber = seatNumber;
+        Teacher.name = name;
+        Teacher.id = id;
+        Teacher.mainFrame  = mainFrame;
         
         new Thread(new VideoReceiver(mainFrame)).start();
         new Thread(new VoiceReceiver(mainFrame)).start();
@@ -30,10 +30,12 @@ public class Teacher implements Runnable{
     }
     
     public static void startVideoCalling() {
-        new Thread(new VideoTransmitter(name, seatNumber, id, mainFrame.its[seatNumber])).start();
+        System.out.println("videocalling is starting");
+        new Thread(new VideoTransmitter(name, seatNumber, id, mainFrame.its[seatNumber], mainFrame)).start();
     }
     
     public static void startVoiceCalling() {
+        System.out.println("voicecalling is starting");
         new Thread(new VoiceTransmitter(name, seatNumber, id, mainFrame.its[seatNumber])).start();
     }
     

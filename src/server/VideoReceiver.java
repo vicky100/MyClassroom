@@ -33,16 +33,18 @@ public class VideoReceiver implements Runnable {
                 queue.remove(res);
                 int seatNumber = res.getSeatNumber();
                 if(mainFrame.its[seatNumber].videoCall == true) {
-                    VideoPacket vp = (VideoPacket) res.getData();
-                    ByteArrayInputStream bais = new ByteArrayInputStream(vp.getData());
-                    BufferedImage image = null;
-                    try {
-                        image = ImageIO.read(bais);
-                    } catch (IOException ex) {
+                    if(res.getData() instanceof VideoPacket) {
+                        VideoPacket vp = (VideoPacket) res.getData();
+                        ByteArrayInputStream bais = new ByteArrayInputStream(vp.getData());
+                        BufferedImage image = null;
+                        try {
+                            image = ImageIO.read(bais);
+                        } catch (IOException ex) {
 
+                        }
+                        if(image != null)
+                            mainFrame.its[seatNumber].setImage(image);
                     }
-                    if(image != null)
-                        mainFrame.its[seatNumber].setImage(image);    
                 }
             }
         }
